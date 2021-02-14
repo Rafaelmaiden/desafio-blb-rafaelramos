@@ -66,10 +66,17 @@
       ref="modal"
       centered
       hide-footer
-      title="Adicionar Produto">
-      <form ref="form" @submit.stop.prevent="saveProduct()">
-        <div class="image">
-          <b-file plain>  Selecionar imagem</b-file>
+      title="Adicionar produto">
+      <form ref="form" @submit.stop.prevent="saveProduct()" class="modal-form ml-auto mr-auto">
+        <div class="div-image text-center">
+          <b-icon
+            icon="image"
+            class="img-model ml-auto mr-auto mt-2"
+            style="width: 50px; height: 70px;">
+          </b-icon><br>
+          <span style="font-size: 14px;">Clique em selecionar imagem ou arraste-a aqui</span><br>
+          <label for="upload-photo" style="color: rgb(20, 115, 230);">Selecionar imagem</label>
+          <b-file id="upload-photo" type="file" style="display:none;" v-model="productPhoto"/>
         </div>
         <b-form-group
           label="Nome"
@@ -77,6 +84,7 @@
           invalid-feedback="O campo nome é requerido."
           :state="nameState">
           <b-form-input
+            class="modal-add-inputs"
             id="name"
             v-model="name"
             :state="nameState"
@@ -89,6 +97,7 @@
           invalid-feedback="O campo preço é requerido."
           :state="nameState">
           <b-form-input
+            class="modal-add-inputs text-right"
             id="name"
             v-model="value"
             :state="valueState"
@@ -134,6 +143,7 @@ export default {
       ],
       nameState: null,
       valueState: null
+
     }
   },
   
@@ -170,7 +180,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .product-card {
   border: none !important;
   width: 100%;
@@ -198,8 +208,8 @@ export default {
 }
 
 .custom-control-input:checked ~ .custom-control-label::before {
-  border-color: #18d26e !important;
-  background-color: #18d26e !important;
+  border-color: #28a745 !important;
+  background-color: #28a745 !important;
   box-shadow: none !important;
 
 }
@@ -235,7 +245,7 @@ export default {
   border: none !important;
 }
 
-.add-button {
+.add-button, .modal-add-inputs {
   width: 100%;
   padding-top: 0.6rem !important;
   padding-bottom: 0.6rem !important;
@@ -245,33 +255,57 @@ export default {
   box-shadow: none !important;
 }
 
-.modal {
-  height: 500px !important;
-  width: 80% !important;
-}
-
 .modal-header {
   border-bottom: none !important;
+  padding-left: 2.5rem !important;
 }
 
 .modal-backdrop {
   background: #cdcdcd !important;
-  opacity: 0.5 !important;
+  opacity: 15 !important;
 }
+
 .modal-title {
-  text-align: center;
+  font-size: 1.8rem !important;
+  font-weight: bold !important;
+  font-family: "Segoe UI",Arial,sans-serif !important;
+  margin-top: 0.5em !important;
 }
 
 .form-control {
   border-radius: 0 !important;
+  font-family: "Segoe UI",Arial,sans-serif !important;
+  height: calc(1.75em + 0.75rem + 2px) !important;
 }
 
-.image {
+.div-image {
   margin-left: auto;
   margin-right: auto;
-  height: 175px;
-  background: #000;
-  border: 2px dashed #fff;
-  width: 90%;
+  height: 160px;
+  border: 2.5px dashed #cdcdcd;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.modal-content {
+  width: 85% !important;
+  border-radius: 0 !important;
+  right: -2.3rem;
+}
+.modal-form{
+  border: none !important;
+  border-radius: 0 !important;
+  width: 95% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.img-model {
+  color: #b4b3b3;
+  background: #fff;
+}
+
+.custom-file-input:lang(en) ~ .custom-file-label::after {
+  content: 'Browse';
 }
 </style>
