@@ -68,6 +68,9 @@
       hide-footer
       title="Adicionar Produto">
       <form ref="form" @submit.stop.prevent="saveProduct()">
+        <div class="image">
+          <b-file plain>  Selecionar imagem</b-file>
+        </div>
         <b-form-group
           label="Nome"
           label-for="name"
@@ -251,16 +254,24 @@ export default {
   border-bottom: none !important;
 }
 
-.modal-header {
-  border-top: none !important;
-}
-
 .modal-backdrop {
-  background-color: #cdcdcd !important;
+  background: #cdcdcd !important;
   opacity: 0.5 !important;
 }
+.modal-title {
+  text-align: center;
+}
 
-.modal-header {
-  align-items: flex-end !important;
+.form-control {
+  border-radius: 0 !important;
+}
+
+.image {
+  margin-left: auto;
+  margin-right: auto;
+  height: 175px;
+  background: #000;
+  border: 2px dashed #fff;
+  width: 90%;
 }
 </style>
