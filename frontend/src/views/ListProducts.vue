@@ -21,7 +21,11 @@
           img-top
           tag="article"
           class="mb-2 product-card text-center">
-          <b-button v-if="editProducts" variant="danger" class="delete-button">
+          <b-button
+            v-if="editProducts"
+            variant="danger"
+            class="delete-button"
+            v-b-tooltip title="Excluir">
             <b-icon icon="x-square" scale="1.2" variant="light"></b-icon>
           </b-button>
           
@@ -37,20 +41,67 @@
       <b-col md="8" class="mr-auto ml-auto">
         <div class="edit-bar">
           <b-row>
-            <b-col class="mt-1">Modo de edição ativo</b-col>
+            <b-col class="mt-1">
+              Modo de edição ativo
+            </b-col>
             <b-col class="text-right">
-              <b-button class="close-button mr-3" variant="outline-light">Fechar</b-button>
-              <b-button class="idit-buttons" variant="success">Adicionar Produto</b-button>
+              <b-button
+                class="close-button mr-3"
+                variant="outline-light">
+                Fechar
+              </b-button>
+              <b-button
+                class="idit-buttons"
+                variant="success"
+                v-b-modal.modal-prevent>
+                Adicionar Produto
+              </b-button>
             </b-col>
           </b-row>
         </div>
       </b-col>
     </b-row>
+    <b-modal
+      id="modal-prevent"
+      ref="modal"
+      centered
+      hide-footer
+      title="Adicionar Produto">
+      <form ref="form" @submit.stop.prevent="saveProduct()">
+        <b-form-group
+          label="Nome"
+          label-for="name"
+          invalid-feedback="O campo nome é requerido."
+          :state="nameState">
+          <b-form-input
+            id="name"
+            v-model="name"
+            :state="nameState"
+            required>
+          </b-form-input>
+        </b-form-group>
+        <b-form-group
+          label="Preço"
+          label-for="value"
+          invalid-feedback="O campo preço é requerido."
+          :state="nameState">
+          <b-form-input
+            id="name"
+            v-model="value"
+            :state="valueState"
+            required>
+          </b-form-input>
+        </b-form-group>
+        <b-button type="submit" class="add-button ml-auto mr-auto" size="md" variant="success" @click="saveProduct()">
+          Adicionar
+        </b-button>
+      </form>
+    </b-modal>
   </b-container>
 </template>
 
 <script>
-import Produto from '../services/config'
+/* import Produto from '../services/config' */
 
 export default {
   name: 'ListProduct',
@@ -78,17 +129,41 @@ export default {
           value: '120'
         },
       ],
+      nameState: null,
+      valueState: null
     }
   },
   
   created () {
     console.log(this.products[0])
-  }
+  },
+
+  methods: {
+    saveProduct() {
+      // Exit when the form isn't valid
+      if (!this.checkFormValidity()) {
+        return
+      }
+    },
+    checkFormValidity() {
+      const valid = this.$refs.form.checkValidity()
+      this.nameState = valid
+      this.valueState = valid
+      return valid
+    },
+    resetModal() {
+      this.name = ''
+      this.nameState = null
+      this.valueState = null
+    }
+      // Push the name to submitted names
+      /* this.submittedNames.push(this.name) */
+      // Hide the modal manually
  /*  mounted() {
     Produto.list().then(resp => {
       console.log('ja')
-    })
-  } */
+    })*/
+  } 
 }
 </script>
 
@@ -157,9 +232,35 @@ export default {
   border: none !important;
 }
 
+.add-button {
+  width: 100%;
+  padding-top: 0.6rem !important;
+  padding-bottom: 0.6rem !important;
+}
+
 .delete-button:hover, .delete-button:focus {
   box-shadow: none !important;
 }
 
+.modal {
+  height: 500px !important;
+  width: 80% !important;
+}
 
+.modal-header {
+  border-bottom: none !important;
+}
+
+.modal-header {
+  border-top: none !important;
+}
+
+.modal-backdrop {
+  background-color: #cdcdcd !important;
+  opacity: 0.5 !important;
+}
+
+.modal-header {
+  align-items: flex-end !important;
+}
 </style>
