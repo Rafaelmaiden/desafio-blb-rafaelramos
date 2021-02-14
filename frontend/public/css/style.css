@@ -1,0 +1,13 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  margin: auto 0;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  border-color: #18d26e !important;
+  background-color: #18d26e !important;
+  box-shadow: none !important;
+}
