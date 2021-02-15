@@ -6,6 +6,10 @@ html {
   margin: auto 0;
 }
 
-.modal-title {
-  text-align: center !important;
+.btn, .card {
+  border-radius: 0 !important;
+}
+
+.card {
+  padding: 0 !important;
 }
