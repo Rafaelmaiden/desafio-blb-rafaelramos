@@ -7,15 +7,16 @@
           <b-col class="mt-1">
             Modo de edição ativo
           </b-col>
-          <b-col class="text-right">
+          <b-col >
             <b-button
+              @click="changeEditingState()"
               class="close-button mr-3"
               variant="outline-light">
               Fechar
             </b-button>
             <b-button
               variant="success"
-              v-b-modal.modal-prevent>
+              v-b-modal.modal-add>
               Adicionar Produto
             </b-button>
           </b-col>
@@ -24,10 +25,11 @@
     </b-col>
     <!-- Add modal -->
     <b-modal
-      id="modal-prevent"
+      id="modal-add"
       ref="modal"
       centered
       hide-footer
+      no-close-on-backdrop
       title="Adicionar produto">
       <form ref="form" @submit.stop.prevent="saveProduct()" class="modal-form ml-auto mr-auto">
         <div class="div-image text-center">
@@ -66,7 +68,7 @@
             required>
           </b-form-input>
         </b-form-group>
-        <b-button type="submit" class="add-button ml-auto mr-auto" size="md" variant="success" @click="saveProduct()">
+        <b-button type="submit" class="modal-add-inputs ml-auto mr-auto" size="md" variant="success" block @click="saveProduct()">
           Adicionar
         </b-button>
       </form>
@@ -75,18 +77,28 @@
 </template>
 
 <script>
+import { EventBus } from '@/eventBus'
+
 export default {
   data () {
     return {
+      nameState: null,
+      valueState: null,
       product: {
         name: '',
-        value: 'R$' + '',
+        value: [],
         photo: ''
       }
     }
   },
 
   methods: {
+      changeEditingState () {
+        /* this.editProducts = false
+        console.log(this.editProducts) */
+        EventBus.$emit('editproducts')
+    },
+
     saveProduct() {
       // Exit when the form isn't valid
       if (!this.checkFormValidity()) {
@@ -131,8 +143,7 @@ export default {
   padding-right: 2.40rem !important;
 }
 /* Stylish for add modal */
-.add-button, .modal-add-inputs {
-  width: 100%;
+.modal-add-inputs {
   padding-top: 0.6rem !important;
   padding-bottom: 0.6rem !important;
 }

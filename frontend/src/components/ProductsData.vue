@@ -12,6 +12,7 @@
           tag="article"
           class="mb-2 product-card text-center">
           <b-button
+            v-b-modal.modal-delete
             v-if="editProducts"
             variant="danger"
             class="delete-button"
@@ -27,6 +28,29 @@
         </b-card>
       </b-col>
     </b-row>
+    <b-modal
+      id="modal-delete"
+      ref="modal"
+      centered
+      hide-footer
+      hide-header
+      no-close-on-backdrop>
+      <h4 class="pt-2">Remover produto</h4>
+      <span style="font-size: 14px;">Você realmente deseja remover este produto?</span>
+       <b-col class="text-right mb-2 mt-4">
+        <b-button
+          @click="$bvModal.hide('modal-delete')"
+          class="close-button mr-3"
+          variant="outline-dark">
+          Manter
+        </b-button>
+        <b-button
+          class="close-button"
+          variant="danger">
+          Remover
+        </b-button>
+      </b-col>
+    </b-modal>
   </b-container >
 </template>
 
@@ -35,8 +59,6 @@ export default {
   data() {
     return {
       editProducts: true,
-      nameState: null,
-      valueState: null,
        products: [
         {
           name: 'bolsa',
