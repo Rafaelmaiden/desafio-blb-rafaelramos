@@ -328,12 +328,15 @@ export default {
 
 /* Stylish for add bar */
 .edit-bar {
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
   padding: 0.75rem !important;
   background: rgba(0, 0, 0, 0.85);
   color: #fff;
   float: center !important;
-  top: -10rem;
-  position: relative;
+  top: 35rem;
+  position: fixed;
 }
 
 .close-button {
