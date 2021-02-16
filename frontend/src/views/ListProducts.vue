@@ -354,6 +354,7 @@ export default {
   color: #fff;
   float: center !important;
   top: 35rem;
+  
   position: fixed;
 }
 
