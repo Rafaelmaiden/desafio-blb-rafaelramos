@@ -34,7 +34,7 @@
       >
         <b-col
           class="mr-auto ml-auto text-center p-1"
-          v-for="(product, index) in products"
+          v-for="(prod, index) in products"
           :key="index"
           md="4"
         >
@@ -44,7 +44,7 @@
           >
             <b-card-group deck class="text-center">
               <b-button
-                @click="getProductById(product.id)"
+                @click="getProductById(prod.id)"
                 v-b-modal.modal-delete
                 v-if="editProducts"
                 variant="danger"
@@ -59,8 +59,8 @@
               </b-button>
               <b-card-img  width="20%" src="https://picsum.photos/400/400/?image=20" alt="Image" class="rounded-0 pl-5 pr-5 mb-1"></b-card-img>
               <b-card-text class="mr-auto ml-auto mt-4">
-                <span class="name text-muted">{{ product.name }} </span> <br>
-                <span class="value">R$ {{ product.price }}</span>
+                <span class="name text-muted">{{ prod.name }} </span> <br>
+                <span class="value">R$ {{ prod.price }}</span>
               </b-card-text>
             </b-card-group>
           </b-card>
@@ -127,14 +127,16 @@
         title="Adicionar produto">
         <form ref="form" @submit.stop.prevent="saveProduct()" class="modal-form ml-auto mr-auto">
           <div class="div-image text-center">
+            <div class="mt-4" v-if="product.photoUrl">  {{ product.photoUrl.name }}</div>
             <b-icon
+              v-else
               icon="image"
               class="img-model ml-auto mr-auto mt-2"
               style="width: 50px; height: 70px;">
             </b-icon><br>
-            <span style="font-size: 14px;">Clique em selecionar imagem ou arraste-a aqui</span><br>
-            <label for="imageUrl" style="color: rgb(20, 115, 230);">Selecionar imagem</label>
-            <b-file id="imageUrl" type="file" style="display:none;" v-model="product.imageUrl"/>
+            <span style="font-size: 14px;" class="text-muted">Clique em selecionar imagem ou arraste-a aqui</span><br>
+            <label for="photoUrl" style="color: rgb(20, 115, 230);">Selecionar imagem</label>
+            <b-file accept="image/*" id="photoUrl" type="file" style="display:none;" v-model="product.photoUrl"/>
           </div>
           <b-form-group
             label="Nome"
@@ -184,8 +186,6 @@ import loader from '../components/loader.vue'
 
 export default {
   components: { loader },
-  name: 'ListProduct',
-  components: { loader },
   data () {
     return {
       loade: true,
@@ -193,16 +193,13 @@ export default {
       products: [],
       nameState: null,
       priceState: null,
-      name: '',
-      price: '',
-      imageUrl: null,
       product: {
         name: '',
         price: '',
-        image_url: null
+        photoUrl: ''
       },
       productIdToDelete: null,
-      ok: false
+      /* ok: false */
     }
   },
 
@@ -213,12 +210,16 @@ export default {
     closeOnEsc: { type: Boolean, default: true }
   }, */
 
-  watch: {
+  /* watch: {
     ok: function () {
       if (this.ok) this.loade = false
-    }
-  },
+    }, */
 
+   /*  product.photoUrl: function () {
+      if (this.product.photoUrl !== '') this.verifyAddModal = true
+    } 
+  },*/
+  
   methods: {
     /* onEsc () {
       if (this.closeOnEsc) {
@@ -229,7 +230,7 @@ export default {
     async getProducts () {
       const get = await axios.get('http://127.0.0.1:5000/products')
       this.products = get.data
-      this.ok = true
+      this.loade = false
     },
 
    async getProductById (id) {
@@ -281,10 +282,23 @@ export default {
     },
 
     resetModal() {
-      this.name = ''
       this.nameState = null
       this.priceState = null
-    }
+    },
+
+    generatePhotoUrl(photoUrl) {
+      const letra = photoUrl.substring(0, 2);
+      if (letra === 'gs') {
+        const storageRef = storage.refFromUR.photooUrl
+        // eslint-disable-next-line
+        storageRef.getDownloadURL().then(url => {
+          this.imageUrl = url;
+        });
+      } else {
+        this.imageUrl = photoUrl;
+      }
+    },
+
       // Push the name to submitted names
       /* this.submittedNames.push(this.name) */
       // Hide the modal manually
