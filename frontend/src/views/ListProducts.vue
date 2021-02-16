@@ -37,6 +37,7 @@
         >
           <b-card-group deck class="text-center">
             <b-button
+              @click="getProductById(product.id)"
               v-b-modal.modal-delete
               v-if="editProducts"
               variant="danger"
@@ -58,7 +59,7 @@
         </b-card>
       </b-col>
     </b-row>
-    <!-- Remove modal product -->
+    <!-- Modal of delete product -->
     <b-modal
       id="modal-delete"
       ref="modal"
@@ -78,6 +79,7 @@
           Manter
         </b-button>
         <b-button
+          @click.prevent="deleteProduct()"
           class="close-button"
           variant="danger"
         >
@@ -169,7 +171,8 @@
 
 <script>
 import axios from 'axios'
-/* axios.put(`${URL_API}/usuarios/cadastro`, this.usuarios); */
+import Swal from 'sweetalert2'
+
 export default {
   name: 'ListProduct',
   data () {
@@ -186,6 +189,7 @@ export default {
         price: '',
         image_url: null
       },
+      productIdToDelete: null
     }
   },
 
@@ -209,6 +213,12 @@ export default {
       this.products = get.data
     },
 
+   async getProductById (id) {
+      const getById = await axios.get('http://127.0.0.1:5000/products')
+      this.productIdToDelete = id
+      console.log(this.productIdToDelete)
+    },
+
     changeEditingState () {
       this.editProducts = false
     },
@@ -220,13 +230,30 @@ export default {
         const post = 'http://127.0.0.1:5000/products'
         axios.post(post, this.product)
           .then( () => {
+            Swal.fire({
+              title: 'Produto adicionado com sucesso!',
+              icon:'success',
+              timer: 1500
+          })
             this.getProducts()
-            this.editProducts = false
-            console.log(this.editProducts)
+            this.changeEditingState()
           }).catch((error) => {
             console.error(error.message)
           })
       }
+    },
+
+    async deleteProduct () {
+      await axios.delete('http://127.0.0.1:5000/products/' + this.productIdToDelete)
+      console.log("Produto deletado!")
+      this.getProducts()
+      this.changeEditingState()
+      await Swal.fire({
+        title: 'Produto deletado com sucesso!',
+        icon:'success',
+        timer: 1500
+      })
+      await this.$bvModal.hide('modal-delete')
     },
 
     checkFormValidity () {
