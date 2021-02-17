@@ -57,7 +57,7 @@
                   variant="light"
                 ></b-icon>
               </b-button>
-              <b-card-img  width="20%" src="https://picsum.photos/400/400/?image=20" alt="Image" class="rounded-0 pl-5 pr-5 mb-1"></b-card-img>
+              <b-card-img  height="200px" :src="'http://127.0.0.1:5000/' + prod.image_url" alt="Image" class="rounded-0 pl-5 pr-5 mb-1"/>
               <b-card-text class="mr-auto ml-auto mt-4">
                 <span class="name text-muted">{{ prod.name }} </span> <br>
                 <span class="value">R$ {{ prod.price }}</span>
@@ -89,6 +89,7 @@
             @click.prevent="deleteProduct()"
             class="close-button"
             variant="danger"
+          
           >
             Remover
           </b-button>
@@ -125,9 +126,9 @@
         hide-footer
         no-close-on-backdrop
         title="Adicionar produto">
-        <form ref="form" @submit.stop.prevent="saveProduct()" class="modal-form ml-auto mr-auto">
+        <form ref="form" class="modal-form ml-auto mr-auto">
           <div class="div-image text-center">
-            <div class="mt-4" v-if="product.photoUrl">  {{ product.photoUrl.name }}</div>
+            <div class="mt-4" v-if="file">  {{ file.name }}</div>
             <b-icon
               v-else
               icon="image"
@@ -135,8 +136,8 @@
               style="width: 50px; height: 70px;">
             </b-icon><br>
             <span style="font-size: 14px;" class="text-muted">Clique em selecionar imagem ou arraste-a aqui</span><br>
-            <label for="photoUrl" style="color: rgb(20, 115, 230);">Selecionar imagem</label>
-            <b-file accept="image/*" id="photoUrl" type="file" style="display:none;" v-model="product.photoUrl"/>
+            <label for="image" style="color: rgb(20, 115, 230);">Selecionar imagem</label>
+            <b-file accept="image/*" id="image" type="file" style="display: none;" @change="selectedFile" v-model="file"/>
           </div>
           <b-form-group
             label="Nome"
@@ -144,6 +145,7 @@
             invalid-feedback="O campo nome é requerido."
             :state="nameState">
             <b-form-input
+              autocomplete="off"
               class="modal-add-inputs"
               id="name"
               v-model="product.name"
@@ -157,6 +159,8 @@
             invalid-feedback="O campo preço é requerido."
             :state="nameState">
             <b-form-input
+              autocomplete="off"
+              step=".01"
               type="number"
               class="modal-add-inputs text-right"
               id="price"
@@ -166,7 +170,7 @@
             </b-form-input>
           </b-form-group>
           <b-button
-            type="submit"
+            @click="saveProduct()"
             class="modal-add-inputs ml-auto mr-auto"
             size="md"
             variant="success"
@@ -188,6 +192,7 @@ export default {
   components: { loader },
   data () {
     return {
+      file: '',
       loade: true,
       editProducts: false,
       products: [],
@@ -196,7 +201,7 @@ export default {
       product: {
         name: '',
         price: '',
-        photoUrl: ''
+        image: []
       },
       productIdToDelete: null,
       /* ok: false */
@@ -206,33 +211,14 @@ export default {
   created() {
     this.getProducts()
   },
-  /* props: {
-    closeOnEsc: { type: Boolean, default: true }
-  }, */
-
-  /* watch: {
-    ok: function () {
-      if (this.ok) this.loade = false
-    }, */
-
-   /*  product.photoUrl: function () {
-      if (this.product.photoUrl !== '') this.verifyAddModal = true
-    } 
-  },*/
   
   methods: {
-    /* onEsc () {
-      if (this.closeOnEsc) {
-        this.changeEditingState()
-      }
-    }, */
 
     async getProducts () {
       const get = await axios.get('http://127.0.0.1:5000/products')
       this.products = get.data
       this.loade = false
     },
-
    async getProductById (id) {
       await axios.get('http://127.0.0.1:5000/products')
       this.productIdToDelete = id
@@ -242,12 +228,23 @@ export default {
       this.editProducts = false
     },
 
+    selectedFile (event) {
+      let fff;
+      fff = event.target.files[0]
+      this.product.image = fff;
+    },
+
     saveProduct() {
-      this.checkFormValidity()
+      this.checkFormValidity();
+          
+      const fd = new FormData()
+      fd.append('name', this.product.name );
+      fd.append('price', this.product.price)
+      fd.append('image', this.product.image);
 
       if (this.nameState && this.priceState) {
-        const post = 'http://127.0.0.1:5000/products'
-        axios.post(post, this.product)
+        const post = 'http://127.0.0.1:5000/products' 
+        axios.post(post, fd, { headers: {'Content-Type':'multipart/form-data'}})
           .then( () => {
             Swal.fire({
               title: 'Produto adicionado com sucesso!',
@@ -285,27 +282,6 @@ export default {
       this.nameState = null
       this.priceState = null
     },
-
-    generatePhotoUrl(photoUrl) {
-      const letra = photoUrl.substring(0, 2);
-      if (letra === 'gs') {
-        const storageRef = storage.refFromUR.photooUrl
-        // eslint-disable-next-line
-        storageRef.getDownloadURL().then(url => {
-          this.imageUrl = url;
-        });
-      } else {
-        this.imageUrl = photoUrl;
-      }
-    },
-
-      // Push the name to submitted names
-      /* this.submittedNames.push(this.name) */
-      // Hide the modal manually
- /*  mounted() {
-    Produto.list().then(resp => {
-      console.log('ja')
-    })*/
   }
 }
 </script>
