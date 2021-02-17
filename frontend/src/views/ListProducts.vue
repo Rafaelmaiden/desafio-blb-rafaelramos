@@ -57,7 +57,10 @@
                   variant="light"
                 ></b-icon>
               </b-button>
-              <b-card-img  height="200px" :src="'http://127.0.0.1:5000/' + prod.image_url" alt="Image" class="rounded-0 pl-5 pr-5 mb-1"/>
+              <b-card-img
+                :src="'http://127.0.0.1:5000/' + prod.image_url"
+                alt="Image"
+                class="rounded-0 pl-5 pr-5 mb-1 image-products" />
               <b-card-text class="mr-auto ml-auto mt-4">
                 <span class="name text-muted">{{ prod.name }} </span> <br>
                 <span class="value">R$ {{ prod.price }}</span>
@@ -253,6 +256,10 @@ export default {
           })
             this.getProducts()
             this.changeEditingState()
+            this.product.name = ''
+            this.product.price = ''
+            this.product.image = []
+            this.file = ''
           }).catch((error) => {
             console.error(error.message)
           })
@@ -414,5 +421,10 @@ export default {
 
 .card-body {
   padding-top: 0 !important;
+}
+
+.image-products {
+  min-height: 15rem;
+  max-height: 15rem;
 }
 </style>
